@@ -3,10 +3,11 @@ package org.hibernate.envers.bugs;
 import java.time.Duration;
 import java.time.Instant;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Transaction;
 import org.hibernate.envers.bugs.hhh13760.Address;
-import org.hibernate.envers.bugs.hhh13760.Shipment;
 import org.hibernate.envers.bugs.hhh13760.AddressVersion;
+import org.hibernate.envers.bugs.hhh13760.Shipment;
 import org.junit.Test;
 
 public class HHH13760TestCase extends AbstractEnversTestCase {
@@ -28,18 +29,7 @@ public class HHH13760TestCase extends AbstractEnversTestCase {
 			session.persist(shipment);
 			session.flush();
 			id = shipment.getId();
-		} finally {
-			if (tx != null) {
-				tx.commit();
-				tx = null;
-			}
-		}
-		session.close();
 
-		openSession();
-		try {
-			tx = session.beginTransaction();
-			var shipment = session.get(Shipment.class, id);
 			var origin = new Address(Instant.now(), "system", "Valencia#1");
 			var destination = new Address(Instant.now(), "system", "Madrid#3");
 			var originV0 = origin.addInitialVersion("Poligono Manises");
@@ -64,9 +54,27 @@ public class HHH13760TestCase extends AbstractEnversTestCase {
 		try {
 			tx = session.beginTransaction();
 			var shipment = session.get(Shipment.class, id);
+			// #### Behavior observed ####
+			// - If origin/destination are not lazy properties, it seems to work.
+			// - If origin/destination are lazy properties and they're initialized with
+			// `Hibernate.initialize`, cast-class exception happens:
+			// class org.hibernate.envers.bugs.hhh13760.AddressVersion cannot be cast to
+			// class java.lang.Long
+			// - If origin/destination are lazy properties and they're not initialized when
+			// the update
+			// happens, PropertyAccessException happens:
+			// java.lang.IllegalArgumentException: Can not set long field
+			// org.hibernate.envers.bugs.hhh13760.BaseDomainEntity.id to
+			// org.hibernate.envers.bugs.hhh13760.AddressVersion
+			
+			// (all failures only happen with envers enabled, of course)
+			
+			Hibernate.initialize(shipment.getOrigin());
+			Hibernate.initialize(shipment.getDestination());
 			shipment.setClosed(true);
 			session.merge(shipment);
 			session.flush();
+
 		} finally {
 			if (tx != null) {
 				tx.commit();

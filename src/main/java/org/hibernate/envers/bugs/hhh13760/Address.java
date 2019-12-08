@@ -19,7 +19,8 @@ public class Address extends BaseDomainEntity {
 	@Column(name = "name", insertable = true, updatable = true, nullable = true)
 	private String name;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "id", cascade = CascadeType.ALL) Collection<AddressVersion> versions = new LinkedList<>();
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "id", cascade = CascadeType.ALL)
+	Collection<AddressVersion> versions = new LinkedList<>();
 
 	Address() {
 	}

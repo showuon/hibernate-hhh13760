@@ -18,7 +18,7 @@ public class AddressVersion extends BaseDomainEntityVersion {
 	private static final long serialVersionUID = 1l;
 
 	@Id
-	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id", referencedColumnName = "id", insertable = true, updatable = false, nullable = false)
 	private Address id;
 
