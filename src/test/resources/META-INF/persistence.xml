@@ -37,6 +37,9 @@
             <property name="javax.persistence.validation.mode" value="NONE"/>
             <property name="hibernate.service.allow_crawling" value="false"/>
             <property name="hibernate.session.events.log" value="true"/>
+
+            <!-- Envers configuration -->
+            <property name="org.hibernate.envers.store_data_at_delete" value="true"/>
         </properties>
 
     </persistence-unit>

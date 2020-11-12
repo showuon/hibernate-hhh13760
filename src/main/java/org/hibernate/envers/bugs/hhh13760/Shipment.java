@@ -1,14 +1,19 @@
 package org.hibernate.envers.bugs.hhh13760;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
@@ -21,12 +26,21 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
 @Entity
-@Table(name = "shipment", uniqueConstraints = @UniqueConstraint(columnNames = { "identifier" }))
+@Table(name = "shipment")
 @Audited
 @AuditTable(value = "shipment_audit")
 public class Shipment extends BaseDomainEntity {
 
 	private static final long serialVersionUID = 1l;
+
+//	@Id
+//	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+//	private Address id;
+
+
+//	@Id
+//	@Column(name = "version", nullable = false, updatable = false)
+//	private long version;
 
 	@Column(name = "due_date", nullable = false, updatable = false)
 	private Instant dueDate;
@@ -45,17 +59,22 @@ public class Shipment extends BaseDomainEntity {
 	@Column(name = "closed")
 	private Boolean closed;
 
-	@ManyToOne(optional = true, fetch = FetchType.LAZY, targetEntity = AddressVersion.class)
-	@JoinColumns(value = { @JoinColumn(name = "origin_address_id", referencedColumnName = "id", nullable = true),
-			@JoinColumn(name = "origin_address_version", referencedColumnName = "version", nullable = true) })
-	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumns(value = { @JoinColumn(name = "origin_address_id", referencedColumnName = "id"),
+			@JoinColumn(name = "origin_address_version", referencedColumnName = "version") })
+	@NotNull
+//	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private AddressVersion origin;
 
-	@ManyToOne(optional = true, fetch = FetchType.LAZY, targetEntity = AddressVersion.class)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY, targetEntity = AddressVersion.class)
 	@JoinColumns(value = { @JoinColumn(name = "destination_address_id", referencedColumnName = "id", nullable = true),
 			@JoinColumn(name = "destination_address_version", referencedColumnName = "version", nullable = true) })
-	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+//	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private AddressVersion destination;
+
+//	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+////	@JoinColumn(name = "due_date")
+//	private ShipmentChildG shipmentChildG;
 
 	Shipment() {
 	}
@@ -67,6 +86,9 @@ public class Shipment extends BaseDomainEntity {
 		this.identifier = Objects.requireNonNull(identifier);
 		this.origin = origin;
 		this.destination = destination;
+//		this.shipmentChild2 = new ShipmentChildG(Instant.now(), "system",
+//			Instant.now().plus(Duration.ofDays(3)), "abcd789",
+//			null, null);
 	}
 
 	public Instant getDueDate() {
@@ -100,4 +122,7 @@ public class Shipment extends BaseDomainEntity {
 	public Boolean getClosed() {
 		return closed;
 	}
+
+//	public ShipmentChildG getShipmentChildG(){return this.shipmentChildG;}
+//	public void setShipmentChildG(ShipmentChildG shipmentChildG){this.shipmentChildG = shipmentChildG;}
 }

@@ -10,7 +10,7 @@
 	<properties>
 		<version.com.h2database>1.4.200</version.com.h2database>
 		<version.junit>4.12</version.junit>
-		<version.org.hibernate>5.4.9.Final</version.org.hibernate>
+		<version.org.hibernate>5.4.22.Final</version.org.hibernate>
 		<version.org.hibernate.validator>6.0.18.Final</version.org.hibernate.validator>
 		<version.org.slf4j>1.7.29</version.org.slf4j>
 	</properties>
@@ -56,7 +56,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
 				<configuration>
-					<release>11</release>
+					<source>8</source>
+					<target>8</target>
 				</configuration>
 			</plugin>
 		</plugins>

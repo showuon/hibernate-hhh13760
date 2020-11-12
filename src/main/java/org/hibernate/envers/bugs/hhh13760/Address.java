@@ -1,5 +1,8 @@
 package org.hibernate.envers.bugs.hhh13760;
 
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
+
 import java.time.Instant;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -13,6 +16,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "address")
+@Audited
 public class Address extends BaseDomainEntity {
 	private static final long serialVersionUID = 1l;
 
@@ -20,7 +24,7 @@ public class Address extends BaseDomainEntity {
 	private String name;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "id", cascade = CascadeType.ALL)
-	Collection<AddressVersion> versions = new LinkedList<>();
+	Collection<AddressVersion> versions = new LinkedList<AddressVersion>();
 
 	Address() {
 	}
@@ -32,7 +36,7 @@ public class Address extends BaseDomainEntity {
 	}
 
 	public AddressVersion addInitialVersion(String description) {
-		var v = new AddressVersion(getCreatedAt(), getCreatedBy(), this, 0, description);
+		AddressVersion v = new AddressVersion(getCreatedAt(), getCreatedBy(), this, 0, description);
 		versions.add(v);
 		return v;
 	}
