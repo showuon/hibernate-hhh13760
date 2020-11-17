@@ -55,22 +55,16 @@ public class HHH13760TestCase extends AbstractEnversTestCase {
 		openSession();
 		try {
 			tx = session.beginTransaction();
-//			AddressVersion addressVersion = session.get(AddressVersion.class, originV0);
 
 			Shipment shipment1 = session.get(Shipment.class, id);
+			// Cast the addressversion to the childAddressVersion, and delete the child one, so the cache for
+			// the addressVersion will not be there, and entityNotFound exception will be thrown while envers audit
+			ChildAddressVersion childAddressVersion = session.get(ChildAddressVersion.class, originV0);
 
 			session.remove(shipment1);
-			ChildAddressVersion addressVersion = session.get(ChildAddressVersion.class, (ChildAddressVersion)originV0);
-//			AddressVersion addressVersion2 = session.get(AddressVersion.class, destinationV0);
-			session.remove(addressVersion);
-//			session.remove(addressVersion2);
-//			session.remove(shipment1.getDestination());
+			session.remove(childAddressVersion);
+
 			session.flush();
-//			session.evict(shipment1.getDestination());
-//			AddressVersion addressVersion2 = session.get(AddressVersion.class, destinationV0);
-//			session.evict(addressVersion2);
-//			session.clear();
-//			session.evict(shipment1);
 		} finally {
 			if (tx != null) {
 				tx.commit();
