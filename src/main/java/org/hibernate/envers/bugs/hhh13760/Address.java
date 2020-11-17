@@ -36,10 +36,11 @@ public class Address extends BaseDomainEntity {
 	}
 
 	public AddressVersion addInitialVersion(String description) {
-		AddressVersion v = new AddressVersion(getCreatedAt(), getCreatedBy(), this, 0, description);
+		AddressVersion v = new ChildAddressVersion(getCreatedAt(), getCreatedBy(), this, 0, description);
 		versions.add(v);
 		return v;
 	}
+
 
 	public String getName() {
 		return name;

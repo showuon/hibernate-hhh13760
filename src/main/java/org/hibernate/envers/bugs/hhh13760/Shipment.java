@@ -60,13 +60,13 @@ public class Shipment extends BaseDomainEntity {
 	private Boolean closed;
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumns(value = { @JoinColumn(name = "origin_address_id", referencedColumnName = "id"),
-			@JoinColumn(name = "origin_address_version", referencedColumnName = "version") })
-	@NotNull
+	@JoinColumns(value = { @JoinColumn(name = "origin_address_id", referencedColumnName = "id", nullable = true),
+			@JoinColumn(name = "origin_address_version", referencedColumnName = "version", nullable = true) })
+//	@NotNull
 //	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private AddressVersion origin;
 
-	@ManyToOne(optional = false, fetch = FetchType.LAZY, targetEntity = AddressVersion.class)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumns(value = { @JoinColumn(name = "destination_address_id", referencedColumnName = "id", nullable = true),
 			@JoinColumn(name = "destination_address_version", referencedColumnName = "version", nullable = true) })
 //	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
